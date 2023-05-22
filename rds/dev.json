@@ -1,0 +1,38 @@
+[
+  {
+    "ParameterKey": "ExportVpcStackName",
+    "ParameterValue": "mystack"
+  },
+  {
+    "ParameterKey": "DBInstanceIdentifier",
+    "ParameterValue": "mysqldb"
+  },
+  {
+    "ParameterKey": "DBName",
+    "ParameterValue": "applicationdb"
+  },
+  {
+    "ParameterKey": "DBAllocatedStorage",
+    "ParameterValue": "20"
+  },
+  {
+    "ParameterKey": "DBInstanceClass",
+    "ParameterValue": "db.t2.small"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DBEngine",
+    "ParameterValue": "MYSQL"
+  },
+  {
+    "ParameterKey": "DBEngineVersion",
+    "ParameterValue": "8.0.32"
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue":"dev"
+  }
+]

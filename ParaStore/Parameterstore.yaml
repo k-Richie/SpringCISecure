@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Resources:
+  RDSMasterParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: masterusername
+      Type: String
+      Value: dbadmin
+      Tier: Standard
+
+  RDSPasswordParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: masterpassword
+      Type: String
+      Value: Password123
+      Tier: Standard
+
+  ECSClusterParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: ecs-cluster
+      Type: String
+      Value: spring
+      Tier: Standard
+
+  # VpcIdParameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: myvpc
+  #     Type: String
+  #     Value: '10.1.0.0/16'
+  #     Tier: Standard
+
+  # PublicSubnet1Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: PublicSubnet1
+  #     Type: String
+  #     Value: '10.1.0.0/24'
+  #     Tier: Standard
+
+  # PublicSubnet2Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: PublicSubnet2
+  #     Type: String
+  #     Value: '10.1.1.0/24'
+  #     Tier: Standard
+
+  # PrivateSubnet1Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: PrivateSubnet1
+  #     Type: String
+  #     Value: '10.1.2.0/24'
+  #     Tier: Standard
+
+  # PrivateSubnet2Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: PrivateSubnet2
+  #     Type: String
+  #     Value: '10.1.3.0/24'
+  #     Tier: Standard
+
+  # RDSPrivateSubnet1Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: RDSPrivateSubnet1
+  #     Type: String
+  #     Value: '10.1.4.0/24'
+  #     Tier: Standard
+
+  # RDSPrivateSubnet2Parameter:
+  #   Type: AWS::SSM::Parameter
+  #   Properties:
+  #     Name: RDSPrivateSubnet2
+  #     Type: String
+  #     Value: '10.1.5.0/24'
+  #     Tier: Standard
+  
+
+
+  
+
+  

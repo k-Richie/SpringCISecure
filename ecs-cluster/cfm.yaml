@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: dev
+  LogGroupName:
+    Type: String
+    Default: Test-log
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: '{{resolve:ssm:ecs-cluster:1}}'
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-Cluster"
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Ref LogGroupName
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-LogGroup"
+
+
+      

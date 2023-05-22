@@ -1,0 +1,390 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: vpc with public and private subnets 
+
+Parameters:
+  VpcCidr:
+    # Default: '10.1.0.0/16'
+    Type: String
+  SSHLocation:
+   Description: The IP address range that can be used to SSH to the EC2 instances
+   Type: String
+  #  Default: 0.0.0.0/0
+  EnvironmentName:
+    Type: String
+    # Default: dev
+  PublicSubnet1CIDR:
+    Type: String
+    # Default: '10.1.0.0/24'
+  PublicSubnet2CIDR:
+    Type: String
+    # Default: '10.1.1.0/24'
+  PrivateSubnet1CIDR:
+    Type: String
+    # Default: '10.1.2.0/24'
+  PrivateSubnet2CIDR:
+    Type: String
+    # Default: '10.1.3.0/24'
+  RDSPrivateSubnet1CIDR:
+    Type: String
+    # Default: '10.1.4.0/24'
+  RDSPrivateSubnet2CIDR:
+    Type: String
+    # Default: '10.1.5.0/24'
+  
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    DependsOn: InternetGateway
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: True
+      EnableDnsSupport: True
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-Vpc"
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: True
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PublicSubnet1"
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref PublicSubnet2CIDR
+      MapPublicIpOnLaunch: True
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PublicSubnet2"
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-InternetGateway"
+     
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref Vpc
+      InternetGatewayId: !Ref InternetGateway
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PublicRT"
+
+  Route:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGateway
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref PrivateSubnet1CIDR
+      MapPublicIpOnLaunch: False
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PrivateSubnet1"
+       
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref PrivateSubnet2CIDR
+      MapPublicIpOnLaunch: False
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PrivateSubnet2"
+  RDSPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref RDSPrivateSubnet1CIDR
+      MapPublicIpOnLaunch: False
+      AvailabilityZone: us-east-1a
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet1"
+  RDSPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref Vpc
+      CidrBlock: !Ref RDSPrivateSubnet2CIDR
+      MapPublicIpOnLaunch: False
+      AvailabilityZone: us-east-1b
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet2"
+  SubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref RouteTable
+  SubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref RouteTable
+  MyEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: AttachGateway
+    Properties: 
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-MyEIP"
+
+  MyNAT:
+    Type: AWS::EC2::NatGateway
+    Properties: 
+      AllocationId: !GetAtt MyEIP.AllocationId
+      SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-MyNAT"
+
+  RouteToNat:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGateway
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref MyNAT  
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PrivateRT"
+
+  PrivateSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
+      RouteTableId: !Ref PrivateRouteTable
+
+  RDSPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-RDSPrivateRT"
+
+  RDSPrivateSubnetRouteTableAssociation1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref RDSPrivateSubnet1
+      RouteTableId: !Ref RDSPrivateRouteTable
+
+  RDSPrivateSubnetRouteTableAssociation2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref RDSPrivateSubnet2
+      RouteTableId: !Ref RDSPrivateRouteTable
+
+
+  ELBWebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access via port 80
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '0'
+          ToPort: '80'
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-ELBWebServerSg"
+
+  LoadBalancer:
+    Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
+    Properties:
+      Name: MyLoadBalancer
+      Scheme: "internet-facing"
+      Type: "application"
+      Subnets:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+      SecurityGroups:
+        - !Ref ELBWebServerSecurityGroup 
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-LoadBalancer"
+  
+  TargetGroup:
+    Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
+    Properties:
+      Name: my-target-group
+      VpcId: !Ref Vpc
+      Protocol: HTTP
+      Port: 8090
+      TargetType: instance
+      HealthCheckIntervalSeconds: 30
+      HealthCheckPath: "/swagger-ui.html"
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-TargetGroup"
+  Listener:
+    Type: "AWS::ElasticLoadBalancingV2::Listener"
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      # Tags:
+      #   - Key: Name
+      #     Value: LB-AppTg8090-myvpc
+
+  PublicServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH for bation
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp:
+            Ref: SSHLocation
+      VpcId: !Ref Vpc 
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-PublicServerSg"
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP access via port 80
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '0'
+          ToPort: '61000'
+          SourceSecurityGroupId: !Ref ELBWebServerSecurityGroup
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp:
+            Ref: SSHLocation
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-WebServerSg"
+
+  DataBaseSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Open database for access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '3306'
+          ToPort: '3306'
+          SourceSecurityGroupId: !Ref WebServerSecurityGroup
+      VpcId: !Ref Vpc
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-DataBaseSg"
+ 
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    DependsOn: PublicSubnet1 
+    Properties:
+      ImageId:  ami-007855ac798b5175e
+      InstanceType: t2.micro 
+      KeyName: ec2 
+      SubnetId: !Ref PublicSubnet1  
+      SecurityGroupIds:
+        - !Ref PublicServerSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-BastionHost"
+
+Outputs:
+  Vpc:
+    Description: VPC Id
+    Export:
+       Name: !Sub ${AWS::StackName}-VPC
+    Value: !Ref Vpc
+
+  PublicSubnet1:
+    Description: Public Subnet 1 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-PublicSubnet1
+    Value: !Ref PublicSubnet1
+
+  PublicSubnet2:
+    Description: Public Subnet 2 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-PublicSubnet2
+    Value: !Ref PublicSubnet2
+
+  PrivateSubnet1:
+    Description: Private Subnet 1 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-PrivateSubnet1
+    Value: !Ref PrivateSubnet1
+
+  PrivateSubnet2:
+    Description: Private Subnet 2 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-PrivateSubnet2
+    Value: !Ref PrivateSubnet2
+
+  RDSPrivateSubnet1:
+    Description: RDS Private Subnet 1 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-RDSPrivateSubnet1
+    Value: !Ref RDSPrivateSubnet1
+
+  RDSPrivateSubnet2:
+    Description: RDS Private Subnet 2 Id
+    Export:
+       Name: !Sub ${AWS::StackName}-RDSPrivateSubnet2
+    Value: !Ref RDSPrivateSubnet2
+
+  DataBaseSecurityGroup:
+    Description: DataBase Security Group ID
+    Export:
+       Name: !Sub ${AWS::StackName}-DataBaseSecurityGroup
+    Value: !Ref DataBaseSecurityGroup
+
+  Listener:
+    Export:
+       Name: !Sub ${AWS::StackName}-Listener
+    Value: !Ref Listener
+
+  TargetGroup:
+    Export:
+       Name: !Sub ${AWS::StackName}-TargetGroup
+    Value: !Ref TargetGroup
+
+  WebServerSecurityGroup:
+    Export:
+       Name: !Sub ${AWS::StackName}-WebServerSecurityGroup
+    Value: !Ref WebServerSecurityGroup
+

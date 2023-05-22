@@ -1,0 +1,93 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploy a service into an ECS cluster behind a public load balancer.
+Parameters:
+  ExportVpcStackName:
+    Type: String
+  ServiceName:
+    Type: String
+  ImageUrl:
+    Type: String
+  ContainerPort:
+    Type: Number
+  Path:
+    Type: String
+  Priority:
+    Type: Number
+  DesiredCount:
+    Type: Number
+  Role:
+    Type: String
+  Profile:
+    Type: String
+  DBNAME:
+    Type: String
+  DBPORT:
+    Type: Number
+  EnvironmentName:
+    Type: String
+    Default: dev
+
+Conditions:
+  HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
+
+Resources:
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: spring
+      NetworkMode: bridge
+      RequiresCompatibilities:
+          - EC2
+      Cpu: 1024
+      Memory: 1024
+      TaskRoleArn:
+        Fn::If:
+          - 'HasCustomRole'
+          - !Ref 'Role'
+          - !Ref "AWS::NoValue"
+      ExecutionRoleArn: !Ref 'Role'
+      ContainerDefinitions:
+        - Name: !Ref 'ServiceName'
+          Image: !Ref 'ImageUrl'
+          PortMappings: 
+             - ContainerPort: !Ref ContainerPort
+               Protocol: tcp
+          Secrets:
+            - Name: DB_USERNAME
+              ValueFrom: !Sub arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/masterusername
+            - Name: DB_PASSWORD
+              ValueFrom: !Sub arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/masterpassword
+            - Name: "DB_ENDPOINT"
+              ValueFrom: !Sub arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/dbendpoint
+          Environment:
+          - Name: "DB_NAME"
+            Value: !Ref DBNAME
+          - Name: "DB_PORT"
+            Value: !Ref DBPORT
+          - Name: "SPRING_PROFILES_ACTIVE"
+            Value: !Ref Profile
+      Tags:
+          - Key: Name
+            Value: !Sub "${EnvironmentName}-TaskDefinition"
+      
+  Service:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Ref 'ServiceName'
+      Cluster: '{{resolve:ssm:ecs-cluster:1}}'
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 75
+      DesiredCount: !Ref DesiredCount
+      TaskDefinition: !Ref 'TaskDefinition'
+      LoadBalancers:
+        - ContainerName: !Ref 'ServiceName'
+          ContainerPort: !Ref ContainerPort
+          TargetGroupArn: 
+            Fn::ImportValue: 
+              !Sub ${ExportVpcStackName}-TargetGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-Service"
+
+  

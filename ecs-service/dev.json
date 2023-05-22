@@ -1,0 +1,52 @@
+[
+  {
+    "ParameterKey": "ExportVpcStackName",
+    "ParameterValue": "mystack"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "springboot"
+  },
+  {
+    "ParameterKey": "ImageUrl",
+    "ParameterValue": "public.ecr.aws/r9p5w0x9/spring_run"
+  },
+  {
+    "ParameterKey": "ContainerPort",
+    "ParameterValue": "8090"
+  },
+  {
+    "ParameterKey": "Path",
+    "ParameterValue": "*"
+  },
+  {
+    "ParameterKey": "Priority",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "DesiredCount",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "Role",
+    "ParameterValue": "ecsTaskExecutionRole"
+  },
+  {
+    "ParameterKey": "Profile",
+    "ParameterValue": "mysql"
+  },
+  {
+    "ParameterKey": "DBNAME",
+    "ParameterValue": "applicationdb"
+  },
+  {
+    "ParameterKey": "DBPORT",
+    "ParameterValue": "3306"
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue":"dev"
+  }
+]
+
+

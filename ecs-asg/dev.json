@@ -1,0 +1,29 @@
+[
+  {
+    "ParameterKey": "MyKeyPairName",
+    "ParameterValue": "vpc"
+  },
+  {
+    "ParameterKey": "MyImageId",
+    "ParameterValue": "ami-0d34b4793f730fcdb"
+  },
+  {
+    "ParameterKey": "ExportVpcStackName",
+    "ParameterValue": "mystack"
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "t3.large"
+  },
+  {
+    "ParameterKey": "SSHLocation",
+    "ParameterValue": "0.0.0.0/0"
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue":"dev"
+  }
+]
+
+
+

@@ -37,7 +37,7 @@
     },
     {
       "ParameterKey": "KeyPair",
-      "ParameterValue": "A4L"
+      "ParameterValue": "ec2"
     } 
   ]
 

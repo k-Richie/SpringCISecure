@@ -27,8 +27,8 @@ Parameters:
     Type: String
     Default: dev
 
-Conditions:
-  HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
+# Conditions:
+#   HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
 
 Resources:
   MyECSTaskExecutionRole:

@@ -15,8 +15,8 @@ Parameters:
     Type: Number
   DesiredCount:
     Type: Number
-  Role:
-    Type: String
+#   Role:
+#     Type: String
   Profile:
     Type: String
   DBNAME:
@@ -31,6 +31,25 @@ Conditions:
   HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
 
 Resources:
+  MyECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: MyECSTaskExecutionRolePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                Resource: arn:aws:ssm:us-east-1:*:parameter/*
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -45,7 +64,7 @@ Resources:
           - 'HasCustomRole'
           - !Ref 'Role'
           - !Ref "AWS::NoValue"
-      ExecutionRoleArn: !Ref 'Role'
+      ExecutionRoleArn: !Ref 'MyECSTaskExecutionRole'
       ContainerDefinitions:
         - Name: !Ref 'ServiceName'
           Image: !Ref 'ImageUrl'

@@ -8,10 +8,10 @@ Parameters:
   InstanceType:
     Default: 't3.large'
     Type: String
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-  SubnetId:
-    Type: 'List<AWS::EC2::Subnet::Id>'
+#   VpcId:
+#     Type: AWS::EC2::VPC::Id
+#   SubnetId:
+#     Type: 'List<AWS::EC2::Subnet::Id>'
   SSHLocation:
    Description: The IP address range that can be used to SSH to the EC2 instances
    Type: String
@@ -67,7 +67,9 @@ Resources:
       LaunchTemplate:
         LaunchTemplateId: !Ref AsgLaunchTemplate
         Version: !GetAtt AsgLaunchTemplate.LatestVersionNumber
-      VPCZoneIdentifier: !Ref SubnetId
+      VPCZoneIdentifier:
+           - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet1
+           - Fn::ImportValue: !Sub ${ExportVpcStackName}-PrivateSubnet2
       TargetGroupARNs: 
            - Fn::ImportValue: 
               !Sub ${ExportVpcStackName}-TargetGroup

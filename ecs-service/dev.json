@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "ExportVpcStackName",
-    "ParameterValue": "mystack"
+    "ParameterValue": "landing-zone"
   },
   {
     "ParameterKey": "ServiceName",
@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "public.ecr.aws/r9p5w0x9/spring_run"
+    "ParameterValue": "url"
   },
   {
     "ParameterKey": "ContainerPort",

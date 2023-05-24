@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "ExportVpcStackName",
-    "ParameterValue": "mystack"
+    "ParameterValue": "landing-zone"
   },
   {
     "ParameterKey": "DBInstanceIdentifier",

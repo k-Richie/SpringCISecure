@@ -185,4 +185,6 @@ You can install the AWS CLI by following the instructions in the AWS Command Lin
 	
 #### STEP4 (CLUSTER):
 	     Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
+	        Command to Provision it:
+		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Cluster template file name>                        			--parameters file://parameters/<your Cluster parameter file name> --region <your region>
 	     

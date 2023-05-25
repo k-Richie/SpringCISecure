@@ -4,16 +4,16 @@
 
 ## How to Run
 #### This application is packaged as a war which has Tomcat 8 embedded. No Tomcat or JBoss installation is necessary. You run it using the java -jar command.
-    • Clone this repository
-    • Make sure you are using JDK 1.8 and Maven 3.x
+• Clone this repository
+• Make sure you are using JDK 1.8 and Maven 3.x
        Java 1.8  : sudo apt-get install openjdk-8-jdk (ubuntu)
        Maven 3.x : sudo apt install maven (ubuntu)
-    • You can build the project and run the tests by running mvn clean package
-    • Once successfully built, you can run the service by one of these two methods:
+• You can build the project and run the tests by running mvn clean package
+• Once successfully built, you can run the service by one of these two methods:
        java -jar -Dspring.profiles.active=profile_name target/spring-boot-rest-example-0.5.0.war#
          or
        mvn spring-boot:run -Drun.arguments="spring.profiles.active=profile_name"
-      Default profilename is “test” for in memory database support
+Default profilename is “test” for in memory database support
  ### Points to remember
     1. Check the stdout or boot_example.log file to make sure no exceptions are thrown
     2. Once the application runs you should see something like this

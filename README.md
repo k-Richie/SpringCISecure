@@ -80,9 +80,9 @@ Default profilename is “test” for in memory database support
         
      
 ### Variables definitions:
-    DB_ENDPOINT : Endpoint of the MySQL database engine
-    DB_PORT          : Port at which database allow traffic 
-    DB_NAME          : Name of the database  
+    DB_ENDPOINT: Endpoint of the MySQL database engine
+    DB_PORT    : Port at which database allow traffic 
+    DB_NAME    : Name of the database  
     DB_USERNAME: Username for the database sourc
     DB_PASSWORD: Password for the database source
     
@@ -165,6 +165,11 @@ Default profilename is “test” for in memory database support
 Prerequisite:-Install and configure the AWS CLI: Ensure that you have the AWS CLI installed and configured with your AWS credentials. 
 You can install the AWS CLI by following the instructions in the AWS Command Line Interface User Guide.
 (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+#### STEP1 (Parameter Store):
+We are Creating and using the parameter store to Store Credentials and data securely(you can skip this step and reflect the changes in 
+template.	
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your parameterStore template file name> 	                                               --region <your region>
 	
 #### STEP2 (VPC):
 Create a cloudformation template and Parameter file of VPC which consists of Vpc,2 public subnets (subnet-1 and subnet-2) and
@@ -173,35 +178,73 @@ The public subnet-1 hosts a bastion host that provides secure access to instance
 The private subnets, subnet-3 and subnet-4,host the backend application servers and RDSinstances.
 Command to Provision it:
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Vpc template file name> 	                                               --parameters file://parameters/<your Vpc parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Vpc template file name> 	                                                       --parameter-overrides file://parameters/<your Vpc parameter file name>  --region <your region>
 	
 #### STEP3 (RDS):
 Create RDS template and Parameter file for connecting the application with the database.(For this application I have used Mysql).
 Command to Provision it:
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your RDS template file name>
-	        --parameters file://parameters/<your RDS parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your RDS template file name>
+	        --parameter-overrides file://parameters/<your RDS parameter file name> --region <your region>
 	
 #### STEP4 (CLUSTER):
 Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
 Command to Provision it:
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Cluster template file name>                        			--parameters file://parameters/<your Cluster parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Cluster template file name>                        			--parameter-overrides file://parameters/<your Cluster parameter file name> --region <your region>
 	
 #### STEP5 (HOST[ASG] & SERVICE):
 Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).
 Command to Provision host(ASG):
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Host template file name> --parameters file://parameters                     /<your Host parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Host template file name> --parameter-overrides
+	        file://parameters/<your Host parameter file name> --region <your region>
 		
 Command to Provision service:
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Service template file name> 		      			--parameters file://parameters/<your Service parameter file name> --region <your region>
+		aws cloudformation create-stack --stack-name <your stack name> --template-file <your Service template file name> 		      			        --parameter-overrides file://parameters/<your Service parameter file name> --capabilities CAPABILITY_NAMED_IAM --region <your region>
 
 
 ### Points to keep in mind:-
 
     • Choose ECS optimized ami-id.
     • Attach IAM role (ecsTaskExecutionRole and also a policy for ssm:getparameters).
-    • For further information refer to the following documentation to launch an Amazon ECS Linux container instance:-
-	(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html)
+	
+• For further information refer to the following documentation to launch an Amazon ECS Linux container instance:-
+(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html)
+
+## Using the Service
+	#### Create a hotel resource
+		POST /example/v1/hotels
+		Accept: application/json
+		Content-Type: application/json
+
+		{
+		"name" : "C1class",
+		"description" : "Very basic, small rooms but clean",
+		"city" : "Delhi",
+		"rating" : 4
+		}
+
+		RESPONSE: HTTP 201 (Created)
+		Location header: http://DNS:8090/example/v1/hotels/1
+	#### Update a hotel resource
+		PUT /example/v1/hotels/1
+		Accept: application/json
+		Content-Type: application/json
+
+		{
+		"name" : "C1class",
+		"description" : "Very basic, big rooms but clean",
+		"city" : "Santa Ana",
+		"rating" : 3
+		}
+	#### Retrieve a paginated list of hotels
+		http://lDNS:8090/example/v1/hotels?page=0&size=10
+
+		Response: HTTP 200
+		Content: paginated list
+
+		RESPONSE: HTTP 204 (No Content)
+
+

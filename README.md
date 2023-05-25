@@ -206,7 +206,8 @@ Command to Provision host(ASG):
 		
 Command to Provision service:
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Service template file name> 		      			        		--parameter-overrides file://parameters/<your Service parameter file name> --capabilities CAPABILITY_NAMED_IAM --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Service template file name> 
+		--parameter-overrides file://parameters/<your Service parameter file name> --capabilities CAPABILITY_NAMED_IAM --region <your region>
 
 
 ### Points to keep in mind:-

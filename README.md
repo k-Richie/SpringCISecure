@@ -155,7 +155,7 @@
   
  ## Provisioning Infrastructure to run the application on ECS 
 	
-    [GitHub :] (https://github.com/k-Richie/SpringCISecure)
+ [GitHub :] (https://github.com/k-Richie/SpringCISecure)
 	
  #### How to get started:
 

@@ -36,8 +36,8 @@ Default profilename is “test” for in memory database support
                 <artifactId>mysql-connector-java</artifactId>
     </dependency>
     
-    When you include this dependency in your Maven project's pom.xml file, 
-    Maven will automatically download the MySQL Connector/J library from the Maven Central Repository and make it available for your project to use
+   When you include this dependency in your Maven project's pom.xml file, 
+   Maven will automatically download the MySQL Connector/J library from the Maven Central Repository and make it available for your project to use
     
  #### Append this to the end of application.yml:(src/main/resources/application.yml)
       ---

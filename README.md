@@ -213,7 +213,7 @@ Command to Provision service:
     • Attach IAM role (ecsTaskExecutionRole and also a policy for ssm:getparameters).
 	
 • For further information refer to the following documentation to launch an Amazon ECS Linux container instance:-
-(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html)
+  (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html)
 
 ## Using the Service
 #### Create a hotel resource

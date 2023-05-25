@@ -134,7 +134,7 @@ Default profilename is “test” for in memory database support
    • Install and configure the AWS CLI: Ensure that you have the AWS CLI installed and configured with your AWS credentials.
      You can install the AWS CLI by following the instructions in the AWS Command Line Interface User Guide.
           
-	            aws ecr create-repository -- my-repo <ecrRepoName> --region <Region>
+	      aws ecr create-repository -- my-repo <ecrRepoName> --region <Region>
           
    • Grant proper permissions: Ensure that your AWS credentials have the necessary permissions to perform actions on the ECR repository. 
         
@@ -170,6 +170,7 @@ You can install the AWS CLI by following the instructions in the AWS Command Lin
 #### STEP1 (Parameter Store):
 We are Creating and using the parameter store to Store Credentials and data securely(you can skip this step and reflect the changes in 
 template.	
+		
 		aws cloudformation deploy --stack-name <your stack name> --template-file <your parameterStore template file name> 	                                               --region <your region>
 	
 #### STEP2 (VPC):
@@ -179,7 +180,7 @@ The public subnet-1 hosts a bastion host that provides secure access to instance
 The private subnets, subnet-3 and subnet-4,host the backend application servers and RDSinstances.
 Command to Provision it:
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Vpc template file name> 	                                                       --parameter-overrides file://parameters/<your Vpc parameter file name>  --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Vpc template file name> 	                                                               --parameter-overrides file://parameters/<your Vpc parameter file name>  --region <your region>
 	
 #### STEP3 (RDS):
 Create RDS template and Parameter file for connecting the application with the database.(For this application I have used Mysql).
@@ -192,7 +193,7 @@ Command to Provision it:
 Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
 Command to Provision it:
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Cluster template file name>                        			--parameter-overrides file://parameters/<your Cluster parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Cluster template file name>                        			        --parameter-overrides file://parameters/<your Cluster parameter file name> --region <your region>
 	
 #### STEP5 (HOST[ASG] & SERVICE):
 Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).
@@ -203,7 +204,7 @@ Command to Provision host(ASG):
 		
 Command to Provision service:
 	
-		aws cloudformation create-stack --stack-name <your stack name> --template-file <your Service template file name> 		      			        --parameter-overrides file://parameters/<your Service parameter file name> --capabilities CAPABILITY_NAMED_IAM --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Service template file name> 		      			        		--parameter-overrides file://parameters/<your Service parameter file name> --capabilities CAPABILITY_NAMED_IAM --region <your region>
 
 
 ### Points to keep in mind:-

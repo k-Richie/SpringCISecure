@@ -1,10 +1,10 @@
 # Setup up Deployment of Spring Boot "Microservice" Example Project (using Docker , Jenkins , CFM , ECR , ECS )
 ## Sample Java / Maven / Spring Boot (version 1.5.6) application code is used in this project
-### [GitHub :] (https://github.com/k-Richie/SpringCI/tree/main/app)
+### [GitHub :] (https://github.com/k-Richie/SpringCISecure)
 
 ## How to Run
 #### This application is packaged as a war which has Tomcat 8 embedded. No Tomcat or JBoss installation is necessary. You run it using the java -jar command.
-##### Clone this repository
+##### Clone this repository : (https://github.com/k-Richie/SpringCISecure)
 
 ##### Make sure you are using JDK 1.8 and Maven 3.x
 	       Java 1.8  : sudo apt-get install openjdk-8-jdk (ubuntu)

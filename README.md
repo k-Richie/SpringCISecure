@@ -134,7 +134,7 @@ Default profilename is “test” for in memory database support
    • Install and configure the AWS CLI: Ensure that you have the AWS CLI installed and configured with your AWS credentials.
      You can install the AWS CLI by following the instructions in the AWS Command Line Interface User Guide.
           
-	      aws ecr create-repository -- my-repo <ecrRepoName> --region <Region>
+	          aws ecr create-repository -- my-repo <ecrRepoName> --region <Region>
           
    • Grant proper permissions: Ensure that your AWS credentials have the necessary permissions to perform actions on the ECR repository. 
         

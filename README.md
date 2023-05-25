@@ -216,7 +216,7 @@ Command to Provision service:
 (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_container_instance.html)
 
 ## Using the Service
-	#### Create a hotel resource
+#### Create a hotel resource
 		POST /example/v1/hotels
 		Accept: application/json
 		Content-Type: application/json
@@ -230,7 +230,9 @@ Command to Provision service:
 
 		RESPONSE: HTTP 201 (Created)
 		Location header: http://DNS:8090/example/v1/hotels/1
-	#### Update a hotel resource
+	
+	
+#### Update a hotel resource
 		PUT /example/v1/hotels/1
 		Accept: application/json
 		Content-Type: application/json
@@ -241,7 +243,9 @@ Command to Provision service:
 		"city" : "Santa Ana",
 		"rating" : 3
 		}
-	#### Retrieve a paginated list of hotels
+	
+	
+#### Retrieve a paginated list of hotels
 		http://lDNS:8090/example/v1/hotels?page=0&size=10
 
 		Response: HTTP 200

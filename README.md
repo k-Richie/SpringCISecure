@@ -159,9 +159,9 @@
 	
  #### How to get started:
 
-	 Prerequisite:-Install and configure the AWS CLI: Ensure that you have the AWS CLI installed and configured with your AWS credentials. 
-	 You can install the AWS CLI by following the instructions in the AWS Command Line Interface User Guide.
-	 (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+Prerequisite:-Install and configure the AWS CLI: Ensure that you have the AWS CLI installed and configured with your AWS credentials. 
+You can install the AWS CLI by following the instructions in the AWS Command Line Interface User Guide.
+(https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 	
 	#### STEP2 (VPC):
 	     Create a cloudformation template and Parameter file of VPC which consists of Vpc,2 public subnets (subnet-1 and subnet-2) and

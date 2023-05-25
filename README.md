@@ -88,7 +88,7 @@ Default profilename is “test” for in memory database support
     
    #### After saving the file after modifications , you can just run: 
         mvn clean install package
-        this will create a war or jar file of the application along with target folder where it will be located.
+   this will create a war or jar file of the application along with target folder where it will be located.
 
 ## Moving to Dockerization
    Make sure you have docker installed on your system 

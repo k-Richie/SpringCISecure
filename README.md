@@ -194,7 +194,8 @@ Command to Provision it:
 Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
 Command to Provision it:
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Cluster template file name>                        			        --parameter-overrides file://parameters/<your Cluster parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Cluster template file name>
+		--parameter-overrides file://parameters/<your Cluster parameter file name> --region <your region>
 	
 #### STEP5 (HOST[ASG] & SERVICE):
 Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).

@@ -25,11 +25,13 @@ Default profilename is “test” for in memory database support
     ##### By default this service is made to use an external database MySQL
  ## How we are Running the project with MySQL (external database)
     Here is what i did to back the services with MySQL, for example:
+    
     In pom.xml add:
     <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
     </dependency>
+    
     When you include this dependency in your Maven project's pom.xml file, 
     Maven will automatically download the MySQL Connector/J library from the Maven Central Repository and make it available for your project to use
     
@@ -94,6 +96,7 @@ Default profilename is “test” for in memory database support
    
        1. Create a Dockerfile: Create a file named "Dockerfile" in the root directory of your Spring Boot project. 
           The Dockerfile contains instructions for building a Docker image for your application.
+	  
        2. Specify a base image: In the Dockerfile, start by specifying a base image that includes 
           the necessary runtime environment for your application, such as OpenJDK or AdoptOpenJDK. For example:
        
@@ -148,7 +151,7 @@ Default profilename is “test” for in memory database support
           
         • Push the Docker image to ECR: Run the following command to push the Docker image to the ECR repository:
         
-        	    docker push <account-id>.dkr.ecr.<region>.amazonaws.com/my-repo:latest
+              ocker push <account-id>.dkr.ecr.<region>.amazonaws.com/my-repo:latest
               
  #### Note: Replace <region> with the AWS region where your ECR repository is located and <account-id> with your AWS account ID.
  Replace my-repo with the name of your ECR repository.

@@ -201,8 +201,8 @@ Command to Provision it:
 Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).
 Command to Provision host(ASG):
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Host template file name> --parameter-overrides
-	        file://parameters/<your Host parameter file name> --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Host template file name> 
+		--parameter-overrides file://parameters/<your Host parameter file name> --region <your region>
 		
 Command to Provision service:
 	

@@ -167,33 +167,32 @@ You can install the AWS CLI by following the instructions in the AWS Command Lin
 (https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 	
 #### STEP2 (VPC):
-	     Create a cloudformation template and Parameter file of VPC which consists of Vpc,2 public subnets (subnet-1 and subnet-2) and
-	     2 private subnets (subnet-3 and subnet-4). The internet-facing ALB is launched in subnet-1 and subnet-2. 
-	     The public subnet-1 hosts a bastion host that provides secure access to instances in private subnets. 
-	     The private subnets, subnet-3 and subnet-4,host the 
-	     backend application servers and RDSinstances.
-		Command to Provision it:
+Create a cloudformation template and Parameter file of VPC which consists of Vpc,2 public subnets (subnet-1 and subnet-2) and
+2 private subnets (subnet-3 and subnet-4). The internet-facing ALB is launched in subnet-1 and subnet-2. 
+The public subnet-1 hosts a bastion host that provides secure access to instances in private subnets. 
+The private subnets, subnet-3 and subnet-4,host the backend application servers and RDSinstances.
+Command to Provision it:
 	
 		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Vpc template file name> 	                                               --parameters file://parameters/<your Vpc parameter file name> --region <your region>
 	
 #### STEP3 (RDS):
-	     Create RDS template and Parameter file for connecting the application with the database.(For this application I have used Mysql).
-		Command to Provision it:
+Create RDS template and Parameter file for connecting the application with the database.(For this application I have used Mysql).
+Command to Provision it:
 	
 		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your RDS template file name>
 	        --parameters file://parameters/<your RDS parameter file name> --region <your region>
 	
 #### STEP4 (CLUSTER):
-	     Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
-	        Command to Provision it:
+Create ECS Cluster where services will be run.(Note:- Choose EC2 Launchtype which manages EC2 instances to host the container).
+Command to Provision it:
 		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Cluster template file name>                        			--parameters file://parameters/<your Cluster parameter file name> --region <your region>
 	
 #### STEP5 (HOST[ASG] & SERVICE):
-	     Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).
-	        Command to Provision host(ASG):
+Create ECS host and services.(Note:-Choose ECS optimized ami-id while launching the EC2 instance).
+Command to Provision host(ASG):
 		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Host template file name> --parameters file://parameters                     /<your Host parameter file name> --region <your region>
 		
-		Command to Provision service:
+Command to Provision service:
 		aws cloudformation create-stack --stack-name <your stack name> --template-body file://<your Service template file name> 		      			--parameters file://parameters/<your Service parameter file name> --region <your region>
 
 

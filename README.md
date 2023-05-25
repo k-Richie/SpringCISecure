@@ -151,7 +151,7 @@
         	    docker push <account-id>.dkr.ecr.<region>.amazonaws.com/my-repo:latest
               
  #### Note: Replace <region> with the AWS region where your ECR repository is located and <account-id> with your AWS account ID.
-            Replace my-repo with the name of your ECR repository.
+ Replace my-repo with the name of your ECR repository.
   
  ## Provisioning Infrastructure to run the application on ECS 
 	

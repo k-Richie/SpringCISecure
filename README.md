@@ -180,7 +180,7 @@ The public subnet-1 hosts a bastion host that provides secure access to instance
 The private subnets, subnet-3 and subnet-4,host the backend application servers and RDSinstances.
 Command to Provision it:
 	
-		aws cloudformation deploy --stack-name <your stack name> --template-file <your Vpc template file name> 	                                                               --parameter-overrides file://parameters/<your Vpc parameter file name>  --region <your region>
+		aws cloudformation deploy --stack-name <your stack name> --template-file <your Vpc template file name> 	                                                                --parameter-overrides file://parameters/<your Vpc parameter file name>  --region <your region>
 	
 #### STEP3 (RDS):
 Create RDS template and Parameter file for connecting the application with the database.(For this application I have used Mysql).

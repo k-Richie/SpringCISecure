@@ -6,7 +6,7 @@ Parameters:
   ExportVpcStackName:
     Type: String
   InstanceType:
-    Default: 't3.large'
+    # Default: 't3.large'
     Type: String
 #   VpcId:
 #     Type: AWS::EC2::VPC::Id
@@ -15,14 +15,13 @@ Parameters:
   SSHLocation:
    Description: The IP address range that can be used to SSH to the EC2 instances
    Type: String
-   MinLength: 9
-   MaxLength: 18
-   Default: 0.0.0.0/0
-   AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
-   ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
   EnvironmentName:
     Type: String
-    Default: dev
+    # Default: dev
+  Application:
+    Type: String
+    # Default: App
+    Description: Define the application name
 
 Resources:
   AsgLaunchTemplate:
@@ -55,7 +54,7 @@ Resources:
           - ResourceType: instance
             Tags:
               - Key: Name
-                Value: !Sub "${EnvironmentName}-AsgLaunchTemplate"
+                Value: !Sub "${EnvironmentName}-AsgLaunchTemplate-${Application}"
   ApplicationAsg:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
@@ -118,4 +117,4 @@ Resources:
             Resource: '*'
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-EC2Role"
+          Value: !Sub "${EnvironmentName}-EC2Role-${Application}"

@@ -25,7 +25,11 @@ Parameters:
     Type: Number
   EnvironmentName:
     Type: String
-    Default: dev
+    # Default: dev
+  Application:
+    Type: String
+    # Default: App
+    Description: Define the application name
 
 # Conditions:
 #   HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
@@ -85,7 +89,7 @@ Resources:
             Value: !Ref Profile
       Tags:
           - Key: Name
-            Value: !Sub "${EnvironmentName}-TaskDefinition"
+            Value: !Sub "${EnvironmentName}-TaskDefinition-${Application}"
       
   Service:
     Type: AWS::ECS::Service
@@ -105,6 +109,6 @@ Resources:
               !Sub ${ExportVpcStackName}-TargetGroup
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-Service"
+          Value: !Sub "${EnvironmentName}-Service-${Application}"
 
   

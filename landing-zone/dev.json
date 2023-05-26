@@ -8,6 +8,10 @@
       "ParameterValue": "dev"
     },
     {
+      "ParameterKey": "Application",
+      "ParameterValue": "App"
+    },
+    {
       "ParameterKey": "SSHLocation",
       "ParameterValue": "0.0.0.0/0"
     },

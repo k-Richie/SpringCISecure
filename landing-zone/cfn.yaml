@@ -34,7 +34,11 @@ Parameters:
   KeyPair:
     Type: String
     #Default: 'ec2'
-  
+  Application:
+    Type: String
+    # Default: App
+    Description: Define the application name
+
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
@@ -45,7 +49,7 @@ Resources:
       EnableDnsSupport: True
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-Vpc"
+          Value: !Sub "${EnvironmentName}-Vpc-${Application}"
   PublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -55,7 +59,7 @@ Resources:
       AvailabilityZone: us-east-1a
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PublicSubnet1"
+          Value: !Sub "${EnvironmentName}-PublicSubnet1-${Application}"
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -65,14 +69,14 @@ Resources:
       AvailabilityZone: us-east-1b
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PublicSubnet2"
+          Value: !Sub "${EnvironmentName}-PublicSubnet2-${Application}"
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-InternetGateway"
-     
+          Value: !Sub "${EnvironmentName}-InternetGateway-${Application}"
+
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
@@ -84,7 +88,7 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PublicRT"
+          Value: !Sub "${EnvironmentName}-PublicRT-${Application}"
 
   Route:
     Type: AWS::EC2::Route
@@ -102,8 +106,8 @@ Resources:
       AvailabilityZone: us-east-1a
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PrivateSubnet1"
-       
+          Value: !Sub "${EnvironmentName}-PrivateSubnet1-${Application}"
+
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -113,7 +117,7 @@ Resources:
       AvailabilityZone: us-east-1b
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PrivateSubnet2"
+          Value: !Sub "${EnvironmentName}-PrivateSubnet2-${Application}"
   RDSPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
@@ -123,7 +127,7 @@ Resources:
       AvailabilityZone: us-east-1a
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet1"
+          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet1-${Application}"
   RDSPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
@@ -133,7 +137,7 @@ Resources:
       AvailabilityZone: us-east-1b
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet2"
+          Value: !Sub "${EnvironmentName}-RDSPrivateSubnet2-${Application}"
   SubnetRouteTableAssociation1:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -147,19 +151,19 @@ Resources:
   MyEIP:
     Type: AWS::EC2::EIP
     DependsOn: AttachGateway
-    Properties: 
+    Properties:
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-MyEIP"
+          Value: !Sub "${EnvironmentName}-MyEIP-${Application}"
 
   MyNAT:
     Type: AWS::EC2::NatGateway
-    Properties: 
+    Properties:
       AllocationId: !GetAtt MyEIP.AllocationId
       SubnetId: !Ref PublicSubnet1
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-MyNAT"
+          Value: !Sub "${EnvironmentName}-MyNAT-${Application}"
 
   RouteToNat:
     Type: AWS::EC2::Route
@@ -167,7 +171,7 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref MyNAT  
+      NatGatewayId: !Ref MyNAT
 
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
@@ -175,7 +179,7 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PrivateRT"
+          Value: !Sub "${EnvironmentName}-PrivateRT-${Application}"
 
   PrivateSubnetRouteTableAssociation1:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -195,7 +199,7 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-RDSPrivateRT"
+          Value: !Sub "${EnvironmentName}-RDSPrivateRT-${Application}"
 
   RDSPrivateSubnetRouteTableAssociation1:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -222,7 +226,7 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-ELBWebServerSg"
+          Value: !Sub "${EnvironmentName}-ELBWebServerSg-${Application}"
 
   LoadBalancer:
     Type: "AWS::ElasticLoadBalancingV2::LoadBalancer"
@@ -234,11 +238,10 @@ Resources:
         - !Ref PublicSubnet1
         - !Ref PublicSubnet2
       SecurityGroups:
-        - !Ref ELBWebServerSecurityGroup 
+        - !Ref ELBWebServerSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-LoadBalancer"
-  
+          Value: !Sub "${EnvironmentName}-LoadBalancer-${Application}"
   TargetGroup:
     Type: "AWS::ElasticLoadBalancingV2::TargetGroup"
     Properties:
@@ -251,7 +254,7 @@ Resources:
       HealthCheckPath: "/swagger-ui.html"
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-TargetGroup"
+          Value: !Sub "${EnvironmentName}-TargetGroup-${Application}"
   Listener:
     Type: "AWS::ElasticLoadBalancingV2::Listener"
     Properties:
@@ -275,10 +278,10 @@ Resources:
           ToPort: '22'
           CidrIp:
             Ref: SSHLocation
-      VpcId: !Ref Vpc 
+      VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-PublicServerSg"
+          Value: !Sub "${EnvironmentName}-PublicServerSg-${Application}"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -296,7 +299,7 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-WebServerSg"
+          Value: !Sub "${EnvironmentName}-WebServerSg-${Application}"
 
   DataBaseSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -310,22 +313,22 @@ Resources:
       VpcId: !Ref Vpc
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-DataBaseSg"
- 
+          Value: !Sub "${EnvironmentName}-DataBaseSg-${Application}"
+
 
   BastionHost:
     Type: AWS::EC2::Instance
-    DependsOn: PublicSubnet1 
+    DependsOn: PublicSubnet1
     Properties:
       ImageId:  ami-007855ac798b5175e
-      InstanceType: t2.micro 
+      InstanceType: t2.micro
       KeyName: !Ref KeyPair
-      SubnetId: !Ref PublicSubnet1  
+      SubnetId: !Ref PublicSubnet1
       SecurityGroupIds:
         - !Ref PublicServerSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-BastionHost"
+          Value: !Sub "${EnvironmentName}-BastionHost-${Application}"
 
 Outputs:
   Vpc:

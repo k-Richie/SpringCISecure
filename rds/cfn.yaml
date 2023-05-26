@@ -29,7 +29,12 @@ Parameters:
 
   EnvironmentName:
     Type: String
-    Default: dev
+    # Default: dev
+
+  Application:
+    Type: String
+    # Default: App
+    Description: Define the application name
   
 Resources:
   DatabasesSubnetGroup:
@@ -41,7 +46,7 @@ Resources:
         - Fn::ImportValue: !Sub ${ExportVpcStackName}-RDSPrivateSubnet2
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-DatabasesubnetGroup"
+          Value: !Sub "${EnvironmentName}-DatabasesubnetGroup-${Application}"
 
   DatabaseInstance:
     Type: AWS::RDS::DBInstance
@@ -62,7 +67,7 @@ Resources:
          - Fn::ImportValue: !Sub ${ExportVpcStackName}-DataBaseSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-DatabaseInstance"
+          Value: !Sub "${EnvironmentName}-DatabaseInstance-${Application}"
 
   EndpointParameter:
     Type: AWS::SSM::Parameter

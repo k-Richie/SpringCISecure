@@ -32,6 +32,10 @@
     "ParameterValue": "8.0.32"
   },
   {
+    "ParameterKey": "Application",
+    "ParameterValue": "App"
+  },
+  {
     "ParameterKey": "EnvironmentName",
     "ParameterValue":"dev"
   }

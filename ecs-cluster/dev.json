@@ -4,6 +4,10 @@
       "ParameterValue": "dev"
     },
     {
+      "ParameterKey": "Application",
+      "ParameterValue": "App"
+    },
+    {
         "ParameterKey": "LogGroupName",
         "ParameterValue": "Test-log"
     }

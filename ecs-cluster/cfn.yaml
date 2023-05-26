@@ -2,10 +2,14 @@ AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
   EnvironmentName:
     Type: String
-    Default: dev
+    # Default: dev
   LogGroupName:
     Type: String
-    Default: Test-log
+    # Default: Test-log
+  Application:
+    Type: String
+    # Default: App
+    Description: Define the application name
 Resources:
   Cluster:
     Type: AWS::ECS::Cluster
@@ -13,14 +17,14 @@ Resources:
       ClusterName: '{{resolve:ssm:ecs-cluster:1}}'
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-Cluster"
+          Value: !Sub "${EnvironmentName}-Cluster-${Application}"
   LogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Ref LogGroupName
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-LogGroup"
+          Value: !Sub "${EnvironmentName}-LogGroup-${Application}"
 
 
       

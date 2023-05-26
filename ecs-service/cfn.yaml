@@ -73,12 +73,7 @@ Resources:
           PortMappings: 
              - ContainerPort: !Ref ContainerPort
                Protocol: tcp
-          LogConfiguration:
-            LogDriver: 'awslogs'
-            Options:
-              awslogs-group: !Ref 'ServiceName'
-              awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: !Ref 'ServiceName'
+         
           Secrets:
             - Name: DB_USERNAME
               ValueFrom: !Sub arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/masterusername

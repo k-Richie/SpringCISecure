@@ -25,11 +25,10 @@ Parameters:
     Type: Number
   EnvironmentName:
     Type: String
-    # Default: dev
-  Application:
+    Default: dev
+  LogGroupName:
     Type: String
-    # Default: App
-    Description: Define the application name
+    Default: my-log
 
 # Conditions:
 #   HasCustomRole: !Not [ !Equals [!Ref 'Role', ''] ]
@@ -53,8 +52,21 @@ Resources:
             Version: '2012-10-17'
             Statement:
               - Effect: Allow
-                Action: ssm:GetParameters
-                Resource: arn:aws:ssm:*:*:parameter/*
+                Action:
+                  - ssm:GetParameters
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource:
+                  - arn:aws:ssm:*:*:parameter/*
+                  - arn:aws:logs:*:*:log-group:*
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Ref LogGroupName
+      Tags:
+        - Key: Name
+          Value: !Sub "${EnvironmentName}-LogGroup"
 
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -73,7 +85,12 @@ Resources:
           PortMappings: 
              - ContainerPort: !Ref ContainerPort
                Protocol: tcp
-         
+          LogConfiguration:
+            LogDriver: 'awslogs'
+            Options:
+               awslogs-group: !Ref LogGroup
+               awslogs-region: !Ref AWS::Region
+               awslogs-stream-prefix: !Ref 'ServiceName'
           Secrets:
             - Name: DB_USERNAME
               ValueFrom: !Sub arn:aws:ssm:us-east-1:${AWS::AccountId}:parameter/masterusername
@@ -90,7 +107,7 @@ Resources:
             Value: !Ref Profile
       Tags:
           - Key: Name
-            Value: !Sub "${EnvironmentName}-TaskDefinition-${Application}"
+            Value: !Sub "${EnvironmentName}-TaskDefinition"
       
   Service:
     Type: AWS::ECS::Service
@@ -108,8 +125,9 @@ Resources:
           TargetGroupArn: 
             Fn::ImportValue: 
               !Sub ${ExportVpcStackName}-TargetGroup
+      
       Tags:
         - Key: Name
-          Value: !Sub "${EnvironmentName}-Service-${Application}"
+          Value: !Sub "${EnvironmentName}-Service"
 
   
